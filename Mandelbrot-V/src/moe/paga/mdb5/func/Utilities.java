@@ -1,17 +1,23 @@
 package moe.paga.mdb5.func;
 
-import java.awt.Image;
+import java.util.Objects;
 import java.util.function.BiFunction;
 
-import moe.paga.mdb5.Location;
-import moe.paga.mdb5.Size;
-
+/**
+ * Some utilities about functions.
+ * 
+ * @author johnchen902
+ */
 public class Utilities {
 	private Utilities() {
 	}
 
-	public static BiFunction<Location, Size, Image> compose(BiFunction<Location, Size, byte[]> f,
-			BiFunction<byte[], Size, Image> g) {
-		return (loc, size) -> g.apply(f.apply(loc, size), size);
+	/**
+	 * Returns a function composed of two relevant functions.
+	 */
+	public static <T, U, R1, R2> BiFunction<T, U, R2> compose(BiFunction<T, U, R1> f, BiFunction<R1, U, R2> g) {
+		Objects.requireNonNull(f);
+		Objects.requireNonNull(g);
+		return (t, u) -> g.apply(f.apply(t, u), u);
 	}
 }
