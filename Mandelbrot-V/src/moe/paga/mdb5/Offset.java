@@ -1,7 +1,9 @@
 package moe.paga.mdb5;
 
+import java.util.Objects;
+
 /**
- * Offset of an image on display.
+ * An immutable representation of offsets.
  * 
  * @author johnchen902
  */
@@ -74,6 +76,7 @@ public class Offset {
 	 * @see Offset#normalize(Size)
 	 */
 	public Location normalize(Location location, Size size) {
+		Objects.requireNonNull(location);
 		int x = this.x, y = this.y;
 		while (x < 0) {
 			x += size.getWidth();

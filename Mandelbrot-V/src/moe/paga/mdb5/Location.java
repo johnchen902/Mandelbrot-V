@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 /**
  * An immutable representation of a sub-rectangle within a "root" rectangle.
@@ -53,6 +54,8 @@ public final class Location implements Comparable<Location> {
 	 * @param quadrants
 	 *            the specified quadrants; the first in the list is the most
 	 *            significant one
+	 * @throws NullPointerException
+	 *             if the specified list is null
 	 */
 	public Location(List<Quadrant> quadrants) {
 		this.quadrants = Collections.unmodifiableList(new ArrayList<>(quadrants));
@@ -60,10 +63,20 @@ public final class Location implements Comparable<Location> {
 			throw new IllegalArgumentException("contains null");
 	}
 
+	/**
+	 * Get the quadrants needed to follow from root to reach this location.
+	 * 
+	 * @return an unmodifiable list of quadrants
+	 */
 	public List<Quadrant> getQuadrants() {
 		return quadrants;
 	}
 
+	/**
+	 * Get the parent location, of which this location is a quadrant.
+	 * 
+	 * @return the parent location
+	 */
 	public Location parent() {
 		if (quadrants.isEmpty())
 			throw new NoSuchElementException("is root");
@@ -72,24 +85,56 @@ public final class Location implements Comparable<Location> {
 		return new Location(q);
 	}
 
+	/**
+	 * Get a child location by following the specified quadrant.
+	 * 
+	 * @param e
+	 *            the specified quadrant
+	 * @return the child location
+	 */
 	public Location child(Quadrant e) {
+		Objects.requireNonNull(e);
 		List<Quadrant> q = new ArrayList<>(quadrants);
 		q.add(e);
 		return new Location(q);
 	}
 
+	/**
+	 * Get the location with X increased by one least significant quadrant.
+	 * Wraps around to the smallest X if exceeded boundary.
+	 * 
+	 * @return the location with X increased
+	 */
 	public Location increaseX() {
 		return operate(II, I, IV, III, II, III);
 	}
 
+	/**
+	 * Get the location with X decreased by one least significant quadrant.
+	 * Wraps around to the largest X if exceeded boundary.
+	 * 
+	 * @return the location with X decreased
+	 */
 	public Location decreaseX() {
 		return operate(II, I, IV, III, I, IV);
 	}
 
+	/**
+	 * Get the location with Y increased by one least significant quadrant.
+	 * Wraps around to the smallest Y if exceeded boundary.
+	 * 
+	 * @return the location with Y increased
+	 */
 	public Location increaseY() {
 		return operate(IV, III, II, I, III, IV);
 	}
 
+	/**
+	 * Get the location with Y decreased by one least significant quadrant.
+	 * Wraps around to the largest Y if exceeded boundary.
+	 * 
+	 * @return the location with Y decreased
+	 */
 	public Location decreaseY() {
 		return operate(IV, III, II, I, I, II);
 	}
@@ -125,7 +170,12 @@ public final class Location implements Comparable<Location> {
 	}
 
 	/**
-	 * Whichever come first in pre-order traversal is smaller.
+	 * Compare two location by comparing their quadrants lexicographically.
+	 * 
+	 * @param loc
+	 *            the location to be compared
+	 * @return a negative integer, zero, or a positive integer as this location
+	 *         is less than, equal to, or greater than the specified location.
 	 */
 	@Override
 	public int compareTo(Location loc) {

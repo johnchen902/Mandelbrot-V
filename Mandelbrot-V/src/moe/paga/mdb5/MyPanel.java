@@ -8,6 +8,7 @@ import java.awt.Image;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BiFunction;
 
@@ -71,7 +72,7 @@ public class MyPanel extends JPanel {
 	 * @see #getImageLocation()
 	 */
 	public void setImageLocation(Location location) {
-		this.location = location;
+		this.location = Objects.requireNonNull(location);
 	}
 
 	/**
