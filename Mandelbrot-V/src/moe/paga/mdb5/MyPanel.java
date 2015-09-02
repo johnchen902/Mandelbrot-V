@@ -73,6 +73,7 @@ public class MyPanel extends JPanel {
 	 */
 	public void setImageLocation(Location location) {
 		this.location = Objects.requireNonNull(location);
+		repaint();
 	}
 
 	/**
@@ -101,6 +102,7 @@ public class MyPanel extends JPanel {
 	public void setImageLocationAndOffset(Location location, Offset offset) {
 		this.location = offset.normalize(location, getChunkSize());
 		this.offset = offset.normalize(getChunkSize());
+		repaint();
 	}
 
 	/**
