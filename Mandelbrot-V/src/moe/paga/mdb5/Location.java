@@ -73,12 +73,24 @@ public final class Location implements Comparable<Location> {
 	}
 
 	/**
+	 * Return whether it is a "root" location.
+	 * 
+	 * @return whether it is a "root" location
+	 */
+	public boolean isRoot() {
+		return quadrants.isEmpty();
+	}
+
+	/**
 	 * Get the parent location, of which this location is a quadrant.
 	 * 
 	 * @return the parent location
+	 * @throws NoSuchElementException
+	 *             if this location is a root location, which has no parent
+	 *             location
 	 */
 	public Location parent() {
-		if (quadrants.isEmpty())
+		if (isRoot())
 			throw new NoSuchElementException("is root");
 		List<Quadrant> q = new ArrayList<>(quadrants);
 		q.remove(q.size() - 1);

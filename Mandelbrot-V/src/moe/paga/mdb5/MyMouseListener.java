@@ -2,6 +2,7 @@ package moe.paga.mdb5;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.util.EventObject;
 import java.util.Objects;
 
@@ -57,6 +58,35 @@ public class MyMouseListener extends MouseAdapter {
 		target.setOffset(new Offset(offset.getX() - (x - lastX), offset.getY() - (y - lastY)));
 		lastX = x;
 		lastY = y;
+	}
+
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		if (!checkEvent(e))
+			return;
+		int rot = e.getWheelRotation();
+		if (rot == 0)
+			return;
+		Location location = target.getImageLocation();
+		if (rot > 0 && location.isRoot())
+			return;
+		Offset offset = target.getOffset();
+		int x = offset.getX(), y = offset.getY();
+		x += e.getX();
+		y += e.getY();
+		if (rot < 0) {
+			location = location.child(Location.Quadrant.III);
+			x *= 2;
+			y *= 2;
+		} else {
+			location = location.parent();
+			x /= 2;
+			y /= 2;
+		}
+		x -= e.getX();
+		y -= e.getY();
+
+		target.setImageLocationAndOffset(location, new Offset(x, y));
 	}
 
 	private boolean checkEvent(EventObject e) {
