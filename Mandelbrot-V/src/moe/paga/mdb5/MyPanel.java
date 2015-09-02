@@ -1,7 +1,5 @@
 package moe.paga.mdb5;
 
-import static moe.paga.mdb5.Location.Quadrant.III;
-
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -15,6 +13,7 @@ import java.util.function.BiFunction;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 
+import moe.paga.mdb5.Location.Quadrant;
 import moe.paga.mdb5.func.DirectImage;
 import moe.paga.mdb5.func.MandelbrotDouble;
 import moe.paga.mdb5.func.Reverse;
@@ -32,7 +31,7 @@ public class MyPanel extends JPanel {
 
 	public MyPanel() {
 		images = new HashMap<>();
-		location = new Location(Arrays.asList(III, III));
+		location = new Location(Arrays.asList(Quadrant.III, Quadrant.III));
 		offset = new Offset();
 		chunkSize = new Size(CHUNK_SIZE, CHUNK_SIZE);
 	}

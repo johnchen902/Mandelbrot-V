@@ -7,18 +7,18 @@ import java.util.Objects;
  * 
  * @author johnchen902
  */
-public class Offset {
+public final class Offset {
 	private final int x, y;
 
 	/**
-	 * Create an offset that is still at the original location.
+	 * Create an offset {@code (0, 0)}.
 	 */
 	public Offset() {
 		this(0, 0);
 	}
 
 	/**
-	 * Create an offset with specified components.
+	 * Create an offset {@code (x, y)}.
 	 * 
 	 * @param x
 	 *            the X component of the offset
