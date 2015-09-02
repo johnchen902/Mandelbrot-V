@@ -118,9 +118,21 @@ public class MyPanel extends JPanel {
 	}
 
 	private Image getImage(Location location) {
-		if (images.containsKey(location)) {
-			return images.get(location);
-		} else {
+		if (!images.containsKey(location)) {
+			images.put(location, null);
+			if (!location.isRoot()) {
+				Image parent = images.get(location.parent());
+				if (parent != null) {
+					int w = getChunkSize().getWidth(), h = getChunkSize().getHeight();
+					Image image = createImage(w, h);
+					int x = location.getQuadrantFromParent().isXPositive() ? w / 2 : 0;
+					int y = location.getQuadrantFromParent().isYPositive() ? h / 2 : 0;
+					Graphics graphics = image.getGraphics();
+					graphics.drawImage(parent, 0, 0, w, h, x, y, x + w / 2, y + h / 2, this);
+					graphics.dispose();
+					images.put(location, image);
+				}
+			}
 			new SwingWorker<Image, Void>() {
 				@Override
 				protected Image doInBackground() throws Exception {
@@ -137,8 +149,8 @@ public class MyPanel extends JPanel {
 					repaint();
 				}
 			}.execute();
-			return null;
 		}
+		return images.get(location);
 	}
 
 	@Override

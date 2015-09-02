@@ -98,6 +98,20 @@ public final class Location implements Comparable<Location> {
 	}
 
 	/**
+	 * Get the quadrant needed to follow from the parent location to reach here.
+	 * 
+	 * @return the quadrant to follow
+	 * @throws NoSuchElementException
+	 *             if this location is a root location, which has no parent
+	 *             location
+	 */
+	public Quadrant getQuadrantFromParent() {
+		if (isRoot())
+			throw new NoSuchElementException("is root");
+		return quadrants.get(quadrants.size() - 1);
+	}
+
+	/**
 	 * Get a child location by following the specified quadrant.
 	 * 
 	 * @param e
