@@ -25,10 +25,90 @@ public class MyPanel extends JPanel {
 	private static final int PANEL_SIZE = 512;
 	private static final int CHUNK_SIZE = 128;
 	private Map<Location, Image> images;
+	private Location location;
+	private Offset offset;
+	private Size chunkSize;
 
 	public MyPanel() {
-		setPreferredSize(new Dimension(PANEL_SIZE, PANEL_SIZE));
 		images = new HashMap<>();
+		location = new Location(Arrays.asList(III, III));
+		offset = new Offset();
+		chunkSize = new Size(CHUNK_SIZE, CHUNK_SIZE);
+	}
+
+	@Override
+	public Dimension getPreferredSize() {
+		return new Dimension(PANEL_SIZE, PANEL_SIZE);
+	}
+
+	/**
+	 * Get the location of the top-left sub-image.
+	 * 
+	 * @return the location of the top-left sub-image
+	 * @see #setImageLocation(Location)
+	 */
+	public Location getImageLocation() {
+		return location;
+	}
+
+	/**
+	 * Get the offset from the origin of top-left sub-image to the origin of
+	 * this component.
+	 * 
+	 * @see #setOffset(Offset)
+	 * 
+	 * @return the offset of top-left sub-image
+	 */
+	public Offset getOffset() {
+		return offset;
+	}
+
+	/**
+	 * Set the location of the top-left sub-image.
+	 * 
+	 * @param location
+	 *            the location of the top-left sub-image
+	 * @see #getImageLocation()
+	 */
+	public void setImageLocation(Location location) {
+		this.location = location;
+	}
+
+	/**
+	 * Set the offset from the origin of top-left sub-image to the origin of
+	 * this component. Actual location and offset may be normalized.
+	 * 
+	 * @param offset
+	 *            the offset of top-left sub-image
+	 * @see #getOffset()
+	 */
+	public void setOffset(Offset offset) {
+		setImageLocationAndOffset(location, offset);
+	}
+
+	/**
+	 * Set the location and the offset of top-left sub-image at once. Actual
+	 * location and offset may be normalized.
+	 * 
+	 * @param location
+	 *            the location of the top-left sub-image
+	 * @param offset
+	 *            the offset of top-left sub-image
+	 * @see #setImageLocation(Location)
+	 * @see #setOffset(Offset)
+	 */
+	public void setImageLocationAndOffset(Location location, Offset offset) {
+		this.location = offset.normalize(location, getChunkSize());
+		this.offset = offset.normalize(getChunkSize());
+	}
+
+	/**
+	 * Get the size of each sub-image.
+	 * 
+	 * @return the size of each sub-image
+	 */
+	public Size getChunkSize() {
+		return chunkSize;
 	}
 
 	private BiFunction<Location, Size, Image> getFunction() {
@@ -42,7 +122,7 @@ public class MyPanel extends JPanel {
 			new SwingWorker<Image, Void>() {
 				@Override
 				protected Image doInBackground() throws Exception {
-					return getFunction().apply(location, new Size(CHUNK_SIZE, CHUNK_SIZE));
+					return getFunction().apply(location, getChunkSize());
 				}
 
 				@Override
@@ -63,10 +143,10 @@ public class MyPanel extends JPanel {
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
-		Location locY = new Location(Arrays.asList(III, III));
-		for (int y = 0; y < getHeight(); y += CHUNK_SIZE, locY = locY.increaseY()) {
+		Location locY = location;
+		for (int y = -offset.getY(); y < getHeight(); y += chunkSize.getHeight(), locY = locY.increaseY()) {
 			Location loc = locY;
-			for (int x = 0; x < getWidth(); x += CHUNK_SIZE, loc = loc.increaseX()) {
+			for (int x = -offset.getX(); x < getWidth(); x += chunkSize.getWidth(), loc = loc.increaseX()) {
 				Image image = getImage(loc);
 				if (image != null)
 					g.drawImage(image, x, y, this);
