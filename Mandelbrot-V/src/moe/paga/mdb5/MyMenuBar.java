@@ -5,6 +5,9 @@ import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
@@ -24,6 +27,7 @@ public class MyMenuBar extends JMenuBar {
 
 	private final MyPanel target;
 	private JFileChooser fileChooser;
+	private PrinterJob job;
 
 	public MyMenuBar(MyPanel target) {
 		this.target = Objects.requireNonNull(target);
@@ -35,6 +39,9 @@ public class MyMenuBar extends JMenuBar {
 			fileChooser.setCurrentDirectory(dirPictures);
 		}
 
+		job = PrinterJob.getPrinterJob();
+		job.setPrintable(createPrintable());
+
 		JMenu mnFile = new JMenu("File");
 		mnFile.setMnemonic(KeyEvent.VK_F);
 		add(mnFile);
@@ -44,12 +51,44 @@ public class MyMenuBar extends JMenuBar {
 		mnFile.add(mntmSave);
 		mntmSave.addActionListener(e -> saveImage());
 
+		JMenuItem mntmPrint = new JMenuItem("Print...", KeyEvent.VK_P);
+		mntmPrint.setAccelerator(KeyStroke.getKeyStroke("ctrl P"));
+		mnFile.add(mntmPrint);
+		mntmPrint.addActionListener(e -> printImage());
+
 		JMenuItem mntmExit = new JMenuItem("Exit", KeyEvent.VK_X);
 		mnFile.add(mntmExit);
 		mntmExit.addActionListener(e -> {
 			Window w = SwingUtilities.getWindowAncestor(this.target);
 			w.dispatchEvent(new WindowEvent(w, WindowEvent.WINDOW_CLOSING));
 		});
+	}
+
+	private Printable createPrintable() {
+		return (g, format, page) -> {
+			if (page > 0)
+				return Printable.NO_SUCH_PAGE;
+
+			double scale = Math.min(format.getImageableWidth() / target.getWidth(),
+					format.getImageableHeight() / target.getHeight());
+
+			Graphics2D g2d = (Graphics2D) g;
+			g2d.translate(format.getImageableX(), format.getImageableY());
+			g2d.scale(scale, scale);
+			target.printAll(g2d);
+
+			return Printable.PAGE_EXISTS;
+		};
+	}
+
+	private void printImage() {
+		if (job.printDialog())
+			try {
+				job.print();
+			} catch (PrinterException ex) {
+				ex.printStackTrace();
+				JOptionPane.showMessageDialog(target, ex, "Error", JOptionPane.ERROR_MESSAGE);
+			}
 	}
 
 	private void saveImage() {
