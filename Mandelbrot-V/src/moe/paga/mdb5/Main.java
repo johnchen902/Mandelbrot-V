@@ -9,7 +9,7 @@ public class Main {
 			public void run() {
 				MyFrame f = new MyFrame();
 				f.setDefaultCloseOperation(MyFrame.EXIT_ON_CLOSE);
-				f.setTitle("Mandelbrot V by johnchen902");
+				f.setTitle("Mandelbrot V");
 				f.setLocationByPlatform(true);
 				f.setVisible(true);
 			}
