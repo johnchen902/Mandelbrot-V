@@ -8,6 +8,7 @@ public class MyFrame extends JFrame {
 		MyPanel myPanel = new MyPanel();
 		MyMouseListener.addFor(myPanel);
 		add(myPanel);
+		setJMenuBar(new MyMenuBar(myPanel));
 		pack();
 	}
 }
