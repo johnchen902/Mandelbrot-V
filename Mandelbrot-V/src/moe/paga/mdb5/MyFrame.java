@@ -1,14 +1,14 @@
 package moe.paga.mdb5;
 
-import javax.swing.JFrame;
+import java.awt.Frame;
 
 @SuppressWarnings("serial")
-public class MyFrame extends JFrame {
+public class MyFrame extends Frame {
 	public MyFrame() {
 		MyPanel myPanel = new MyPanel();
 		MyMouseListener.addFor(myPanel);
 		add(myPanel);
-		setJMenuBar(new MyMenuBar(myPanel));
+		setMenuBar(new MyMenuBar(myPanel));
 		pack();
 	}
 }

@@ -1,5 +1,6 @@
 package moe.paga.mdb5;
 
+import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -10,7 +11,6 @@ import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BiFunction;
 
-import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 
 import moe.paga.mdb5.Location.Quadrant;
@@ -20,7 +20,7 @@ import moe.paga.mdb5.func.Reverse;
 import moe.paga.mdb5.func.Utilities;
 
 @SuppressWarnings("serial")
-public class MyPanel extends JPanel {
+public class MyPanel extends Canvas {
 
 	private static final int PANEL_SIZE = 512;
 	private static final int CHUNK_SIZE = 128;
@@ -154,8 +154,17 @@ public class MyPanel extends JPanel {
 	}
 
 	@Override
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
+	public void update(Graphics g0) {
+		Image buffer = createImage(getWidth(), getHeight());
+		Graphics g = buffer.getGraphics();
+		paint(g);
+		g.dispose();
+		g0.drawImage(buffer, 0, 0, this);
+	}
+
+	@Override
+	public void paint(Graphics g) {
+		super.paint(g);
 
 		Location locY = location;
 		for (int y = -offset.getY(); y < getHeight(); y += chunkSize.getHeight(), locY = locY.increaseY()) {

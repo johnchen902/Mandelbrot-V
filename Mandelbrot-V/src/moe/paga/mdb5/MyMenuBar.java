@@ -1,27 +1,25 @@
 package moe.paga.mdb5;
 
+import java.awt.Menu;
+import java.awt.MenuBar;
+import java.awt.MenuItem;
 import java.awt.Window;
 import java.awt.event.WindowEvent;
 import java.util.Objects;
 
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
-import java.awt.event.KeyEvent;
 
 @SuppressWarnings("serial")
-public class MyMenuBar extends JMenuBar {
+public class MyMenuBar extends MenuBar {
 	private final MyPanel target;
 
 	public MyMenuBar(MyPanel target) {
 		this.target = Objects.requireNonNull(target);
 
-		JMenu mnFile = new JMenu("File");
-		mnFile.setMnemonic(KeyEvent.VK_F);
+		Menu mnFile = new Menu("File");
 		add(mnFile);
 
-		JMenuItem mntmExit = new JMenuItem("Exit", KeyEvent.VK_X);
+		MenuItem mntmExit = new MenuItem("Exit");
 		mnFile.add(mntmExit);
 		mntmExit.addActionListener(e -> {
 			Window w = SwingUtilities.getWindowAncestor(this.target);
