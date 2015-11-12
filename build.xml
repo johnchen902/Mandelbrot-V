@@ -1,5 +1,7 @@
 <project name="Mandelbrot-V" basedir="." default="main">
 
+    <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"/>
+    
     <property name="src.dir"     value="src"/>
     <property name="build.dir"   value="build"/>
     <property name="classes.dir" value="${build.dir}/classes"/>
@@ -7,6 +9,8 @@
     <property name="lib.dir"     value="lib"/>
     <property name="main-class"  value="moe.paga.mdb5.Main"/>
     <property name="report.dir"  value="${build.dir}/junitreport"/>
+    <property name="findbugs.dir"  value="${build.dir}/findbugs"/>
+    <property name="findbugs.home" value="/opt/findbugs" />
 
     <path id="classpath">
         <fileset dir="${lib.dir}" includes="**/*.jar"/>
@@ -15,7 +19,9 @@
 
 
     <target name="clean">
-        <delete dir="${build.dir}"/>
+        <delete includeemptydirs="true">
+            <fileset dir="${build.dir}" includes="**/*"/>
+        </delete>
     </target>
 
     <target name="compile">
@@ -65,6 +71,21 @@
             <fileset dir="${report.dir}" includes="TEST-*.xml"/>
             <report todir="${report.dir}"/>
         </junitreport>
+    </target>
+
+    <target name="findbugs" depends="jar">
+        <mkdir dir="${findbugs.dir}"/>
+        <findbugs home="${findbugs.home}" output="xml" outputFile="${findbugs.dir}/bugs.xml" >
+            <sourcePath path="${src.dir}" />
+            <class location="${classes.dir}" />
+        </findbugs>
+    </target>
+
+    <target name="findbugsreport">
+        <exec executable="java">
+            <arg value="-jar" />
+            <arg value="${findbugs.home}/lib/findbugs.jar" />
+        </exec>
     </target>
 
     <target name="clean-build" depends="clean,jar"/>
